@@ -1,0 +1,5 @@
+Werkzeug
+requests
+Flask
+face_recognition
+Pillow
