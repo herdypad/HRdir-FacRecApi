@@ -11,12 +11,14 @@ chmod +x Miniconda3-latest-Linux-x86_64.sh
 
 ./Miniconda3-latest-Linux-x86_64.sh
 
-conda create -n newenv
+conda create -n myenvi
 
 conda env create -f environment.yml
 ```
 
 ```
+conda activate myenvi
+
 get clone https://github.com/herdypad/HRdir-FacRecApi.git
 cd HRdir-FacRecApi\
 
