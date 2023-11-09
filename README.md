@@ -33,7 +33,7 @@ nohup python flask_server.py > output.log &
 
 #format API
 ```
-
+http://8.215.27.241/face_match
 {
 file1:,
 file2;
