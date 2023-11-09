@@ -21,6 +21,8 @@ cd HRdir-FacRecApi\
 conda install python
 pip install -r requirements.txt
 
+# ini emang lama
+
 python flask_server.py
 
 ```
