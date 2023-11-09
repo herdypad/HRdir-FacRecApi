@@ -129,16 +129,8 @@ def face_match():
             return json.dumps(resp_data)
 
     # Return a demo page for GET request
-    return '''
-    <!doctype html>
-    <title>Face Match</title>
-    <h1>Upload two images</h1>
-    <form method=post enctype=multipart/form-data>
-      <input type=file name=file1>
-      <input type=file name=file2>
-      <input type=submit value=Upload>
-    </form>
-    '''
+    resp_data = {"match": false}
+     return json.dumps(resp_data)
 
 @app.route('/')
 def hello_world():
