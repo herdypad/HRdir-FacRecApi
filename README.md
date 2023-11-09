@@ -18,6 +18,7 @@ conda activate myenvi
 git clone https://github.com/herdypad/HRdir-FacRecApi.git
 cd HRdir-FacRecApi\
 
+conda install python
 pip install -r requirements.txt
 
 python flask_server.py
