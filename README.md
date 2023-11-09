@@ -1,3 +1,33 @@
+# Cara Deploy DI VPS
+```
+sudo apt apdate
+sudo apt upgrade
+```
+
+```
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64
+
+chmod +x Miniconda3-latest-Linux-x86_64.sh
+
+./Miniconda3-latest-Linux-x86_64.sh
+
+conda create -n newenv
+
+conda env create -f environment.yml
+```
+
+```
+get clone https://github.com/herdypad/HRdir-FacRecApi.git
+cd HRdir-FacRecApi\
+
+pip install -r requirements.txt
+
+python flask_server.py
+
+
+```
+
+
 # face_rec_api
 Build a REST API for [face recognition](https://github.com/ageitgey/face_recognition) so you can use it to develop your own face recognition applications without the need to learn complicated machine learning. 
 
