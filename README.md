@@ -10,6 +10,13 @@ chmod +x Miniconda3-latest-Linux-x86_64.sh
 ./Miniconda3-latest-Linux-x86_64.sh
 conda create -n myenvi
 conda env create -f environment.yml
+
+
+jika conda command not found lakukan ini
+sudo ln -s /root/miniconda3/bin/conda /usr/local/bin/conda
+
+alias conda="/root/miniconda3/bin/conda"
+
 ```
 
 ```
