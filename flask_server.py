@@ -130,7 +130,7 @@ def face_match():
 
     # Return a demo page for GET request
     resp_data = {"match": false}
-     return json.dumps(resp_data)
+    return json.dumps(resp_data)
 
 @app.route('/')
 def hello_world():
