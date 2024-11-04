@@ -2,7 +2,8 @@ from flask import Flask, request, redirect
 from werkzeug.utils import secure_filename
 import os
 import json
-from face_util import compare_faces, face_rec, find_facial_features, find_face_locations
+from face_util import detect_spoofing2, compare_faces, face_rec, find_facial_features, find_face_locations
+from detect_spoofing import detect_spoofing
 import re
 import base64
 
@@ -27,7 +28,7 @@ def print_request(request):
         # replace image_data with '<image base64 data>'
         if json_data.get('image_data', None) is not None:
             json_data['image_data'] = '<image base64 data>'
-        else: 
+        else:
             print('request image_data is None.')
         print(json.dumps(json_data,indent=4))
     else: # form data
@@ -58,10 +59,10 @@ def face_recognition():
             file = os.path.join(UPLOAD_FOLDER, 'image.' + file_format)
             with open(file,'wb') as f:
                 # Note: Convert ascii string to binary string first, e.g. 'abc' to b'abc', before decode as base64 string.
-                f.write(base64.b64decode(image_data.encode('ascii'))) 
-        
+                f.write(base64.b64decode(image_data.encode('ascii')))
+
         # form data format
-        else: 
+        else:
             # check if the post request has the file part
             if 'file' not in request.files:
                 print('No file part')
@@ -74,7 +75,7 @@ def face_recognition():
 
             if not allowed_file(file.filename):
                 return '{"error":"Invalid image file format."}'
-        
+
         # Process image file
         # Note file could be a filename or a file object.
         name = face_rec(file)
@@ -106,6 +107,57 @@ def face_recognition():
     </form>
     '''
 
+@app.route('/spoofing', methods=['POST', 'GET'])
+def spoof_detect():
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'file1' not in request.files:
+            print('No file part')
+            return redirect(request.url)
+
+        file1 = request.files.get('file1')
+        # if user does not select file, browser also submit an empty part without filename
+        if file1.filename == '':
+            print('No selected file')
+            return redirect(request.url)
+
+        if allowed_file(file1.filename):
+            ret = detect_spoofing(file1)
+            resp_data = {"match spoof": bool(ret)} # convert ret (numpy._bool) to bool for json.dumps
+            if bool(ret):
+                return json.dumps({
+                    "status": "Foto Asli"
+                })
+            else:
+                return json.dumps(
+                    {
+                        "status": "Foto Tidak Asli"
+                    }
+                )
+    else:
+        return '''
+        <!doctype html>
+        <title>Spoof Detection</title>
+        <h1>Upload an image to detect spoofing</h1>
+        <form method="post" enctype="multipart/form-data">
+          <input type="file" name="file1" id="fileInput" onchange="previewImage(event)">
+          <input type="submit" value="Upload">
+        </form>
+        <img id="imagePreview" src="" alt="Image Preview" style="display:none; max-width: 100%; height: auto;"/>
+        
+        <script>
+        function previewImage(event) {
+            var reader = new FileReader();
+            reader.onload = function(){
+                var output = document.getElementById('imagePreview');
+                output.src = reader.result;
+                output.style.display = 'block';
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+        </script>
+        '''
+
 @app.route('/face_match', methods=['POST', 'GET'])
 def face_match():
     if request.method == 'POST':
@@ -124,12 +176,14 @@ def face_match():
         if allowed_file(file1.filename) and allowed_file(file2.filename):
             #file1.save( os.path.join(UPLOAD_FOLDER, secure_filename(file1.filename)) )
             #file2.save( os.path.join(UPLOAD_FOLDER, secure_filename(file2.filename)) )
-            ret = compare_faces(file1, file2)
-            resp_data = {"match": bool(ret)} # convert ret (numpy._bool) to bool for json.dumps
+            # ret = compare_faces(file1, file2)
+
+            ret = detect_spoofing(file1)
+            resp_data = {"match spoof": bool(ret)} # convert ret (numpy._bool) to bool for json.dumps
             return json.dumps(resp_data)
 
     # Return a demo page for GET request
-    resp_data = {"match": false}
+    resp_data = {"match": False}
     return json.dumps(resp_data)
 
 @app.route('/')
@@ -140,4 +194,4 @@ def hello_world():
 # When debug = True, code is reloaded on the fly while saved
 # app.run(host='0.0.0.0', port='5001', debug=True)
 #app.run(host='8.215.27.241', port='80', debug=True)
-app.run(host='0.0.0.0', port='80', debug=True)
+app.run(host='0.0.0.0', port='8080', debug=True)

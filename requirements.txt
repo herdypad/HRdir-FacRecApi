@@ -3,3 +3,4 @@ requests
 Flask
 face_recognition
 Pillow
+opencv-python
